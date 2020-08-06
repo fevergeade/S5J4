@@ -1,0 +1,33 @@
+<div class="jumbotron">
+<h1 class="display-4">The Gossip Project</h1>
+<p class="lead">Edition d'une gossip</p>
+</div>
+<%= link_to 'retour à la liste', gossips_path, class: "btn btn-primary btn-sm btn-block" %>
+
+<div class="container mt-5 form-group">
+  <%= form_for @gossip do |f| %>
+    <div>
+      <label><strong>Titre du potin</strong></label>
+      <%= f.text_field :title, class:"form-control" %>
+      <br /> 
+    </div>
+    <div>
+      <label><strong>le contenu du potin</strong></label>
+      <%= f.text_area :content, class:"form-control" %>
+      <br /> 
+    </div>
+    <strong>Ajouter un tag</strong>
+      <div class="align-items-center text-center" >
+        <div class="row">
+          <% @tags.each do |tag| %>
+            <div class="m-3 text-center">
+              <%= check_box_tag "@tag_selected[]", tag.id, (@current_tags.index(tag.id)==nil)? false : true %>
+              <%= tag.title %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <%= f.hidden_field :user_id, value: "#{User.first.id}" %>
+    <%= f.submit "Modifier un potin", class:"btn btn-success btn-lg" %>
+  <%end%>
+</div>

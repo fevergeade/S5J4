@@ -1,0 +1,16 @@
+<div class="jumbotron">
+<h1 class="display-4">The Gossip Project</h1>
+<p class="lead">Edition d'un commentaire</p>
+</div>
+<%= link_to 'retour à la liste', gossips_path, class: "btn btn-primary btn-sm btn-block" %>
+
+<div class="container mt-5 form-group">
+  <%= form_for @comment do |f| %>
+      <label><strong>le commentaire</strong></label>
+      <%= f.text_area :content, class:"form-control" %>
+      <br /> 
+    </div>
+    <%= f.submit "Modifier le commentaire", class:"btn btn-primary btn-lg" %>
+    <%= link_to 'Supprimer', @comment, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger btn-sm" %>
+  <%end%>
+</div>

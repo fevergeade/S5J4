@@ -1,0 +1,32 @@
+<div class="jumbotron">
+<h1 class="display-4">The Gossip Project</h1>
+<p class="lead">Affichage de tous les gossips</p>
+</div>
+
+
+<%= link_to 'Créer un nouveau GOSSIP', new_gossip_path, class: "btn btn-primary btn-lg"%>
+<br />
+<br />
+<div class="list-group">
+  <% @gossips.each do |gossip| %>
+    <div> 
+      <div class="list-group-item">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1"><%= gossip.title %></h5>
+          <small> N° <%= gossip.id%> </small>
+        </div>
+        <p class="mb-1"><%= gossip.content %></p>
+        <div class="d-flex w-100 justify-content-between">
+          <p>created by <%= link_to "#{gossip.user.first_name} #{gossip.user.last_name}", user_path(gossip.user.id) %>
+            <span class="badge badge-primary">Nombre de commentaire<span class="badge badge-light"><%=gossip.comments.count%></span></span>
+          </p>
+          <div>
+            <%= link_to 'Show', gossip, class: "btn btn-primary btn-sm"%>
+            <%= link_to 'Edit', edit_gossip_path(gossip), class: "btn btn-warning btn-sm" %>
+            <%= link_to 'Destroy', gossip, method: :delete, data: { confirm: 'êtes-vous sûr ?' }, class: "btn btn-danger btn-sm" %>
+          </div>
+        </div>
+      </div>
+    <div>
+    <% end %>
+</div>

@@ -1,0 +1,45 @@
+<div class="jumbotron">
+<h1 class="display-4">The Gossip Project</h1>
+<p class="lead">Présentation d'un utilisateur</p>
+</div>
+<%= link_to 'retour à la liste', gossips_path, class: "btn btn-primary btn-sm btn-block" %>
+
+<div class="container mt-5 form-group">
+<p>
+  <div , class:"form-control">
+    <strong>Nom : </strong>
+    <%= @user.last_name %>
+  </div>
+</p>
+
+<p>
+  <div , class:"form-control">
+    <strong>Prénom :  </strong>
+    <%= @user.first_name %>
+</div>
+</p>
+
+<p>
+  <div , class:"form-control">
+    <strong>Description:</strong>
+    <%= @user.description %>
+  </div>
+</p>
+
+<p>
+  <div , class:"form-control">
+    <strong>Email:</strong>
+    <%= @user.email %>
+  </div>
+</p>
+
+<p>
+  <div , class:"form-control">
+    <strong>Age:</strong>
+    <%= @user.age %>
+  </div>
+</p>
+
+<%= link_to 'Modifier', edit_user_path(@user) %> |
+<%= link_to 'Retour', gossips_path %>
+</div>
