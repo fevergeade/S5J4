@@ -33,12 +33,12 @@ tp City.all
     email: Faker::Name.last_name + "@mail.com",
     age:rand(18..120),
     city_id: City.find(rand(City.first.id..City.last.id)).id,
-    password_digest: "123456789"
+    password: "123456789"
   )
 end
 puts "voici la liste des utilisateurs créés:"
 tp User.all
-
+puts "fin"
 20.times do
   Gossip.create(
     title: Faker::GreekPhilosophers.name,
