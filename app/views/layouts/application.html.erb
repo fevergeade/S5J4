@@ -22,19 +22,29 @@
           <%= link_to "Les Gossips", gossips_path, :class => "nav-link" %>
         </li>
         <li class="nav-item active">
-          <%= link_to "Les utilisateurs", users_path, :class => "nav-link" %>
-        </li>
-        <li class="nav-item active">
-          <%= link_to "Les utilisateurs", users_path, :class => "nav-link" %>
-        </li>
-        <li class="nav-item active">
           <%= link_to "Equipe de choc", team_path, :class => "nav-link" %>
         </li>
         <li class="nav-item active">
           <%= link_to "Contact", contact_path, :class => "nav-link" %>
         </li>
       </ul>
+      <% if logged_in? %>
+        <div>
+          <%= link_to "DECONNEXION", sessions_controller_path(session.id), :class => "btn btn-outline-success my-2 my-sm-0", method: :delete %>
+        </div>
+      <% else %>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            S'inscrire / Se connecter
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <%= link_to "INSCRIPTION", new_user_path, :class => "dropdown-item" %>
+            <%= link_to "CONNEXION", new_sessions_controller_path, :class => "dropdown-item" %>
+          </div>
+        </div>
+      <% end %>
     </div>
+
   </nav>
   <%= yield %>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

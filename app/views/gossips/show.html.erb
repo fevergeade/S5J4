@@ -14,8 +14,10 @@
   <div class="d-flex w-100 justify-content-between">
     <small>created by <%= link_to "#{@gossip.user.first_name} #{@gossip.user.last_name}", user_path(@gossip.user.id) %> from <%= link_to "#{@gossip.user.city.name}", city_path(@gossip.user.city.id) %> </small>
     <div>
-      <%= link_to 'Modifier', edit_gossip_path(@gossip), class: "btn btn-warning btn-sm" %>
-      <%= link_to 'Supprimer', @gossip, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger btn-sm" %>
+      <%if session[:user_id] == @gossip.user.id %>
+        <%= link_to 'Modifier', edit_gossip_path(@gossip), class: "btn btn-warning btn-sm" %>
+        <%= link_to 'Supprimer', @gossip, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger btn-sm" %>
+      <%end%>
     </div>
   </div>
   <div>
@@ -28,24 +30,37 @@
 <br /> 
 <div class="list-group">
 <% @comments.each do |comment| %>
-  <%= link_to(edit_comment_path(comment.id), class: "list-group-item list-group-item-action") do %>
-    <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1">Commentaire de Mr <%= comment.user.last_name %> <%= comment.user.first_name %> </h5>
-      <small><%= comment.created_at %></small>
-    </div>
-    <p class="mb-1"><%= comment.content %></p>
-    <small><%= comment.user.city.name %></small>
-  <% end %>
+  <%if  session[:user_id] == comment.user.id %>
+    <%= link_to(edit_comment_path(comment.id), class: "list-group-item list-group-item-action") do %>
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">Commentaire de Mr <%= comment.user.last_name %> <%= comment.user.first_name %> </h5>
+        <small><%= comment.created_at %></small>
+      </div>
+      <p class="mb-1"><%= comment.content %></p>
+      <small><%= comment.user.city.name %></small>
+    <% end %>
+  <%else%>
+      <div class="list-group-item">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Commentaire de Mr <%= comment.user.last_name %> <%= comment.user.first_name %> </h5>
+          <small><%= comment.created_at %></small>
+        </div>
+        <p class="mb-1"><%= comment.content %></p>
+        <small><%= comment.user.city.name %></small>
+      </div>
+  <% end %> 
 <% end %>
 </div>
-<div class="container mt-5 form-group">
-  <%= form_for @comment do |f| %>
-      <label><strong>Ajouter un commentaire</strong></label>
-      <%= f.text_field :content, class:"form-control" %>
-      <br /> 
-    </div>
-    <%= f.hidden_field :user_id, value: "#{User.first.id}" %>
-        <%= f.hidden_field :gossip_id, value: "#{@gossip.id}" %>
-    <%= f.submit "Ajouter le commentaire", class:"btn btn-success btn-lg" %>
-  <%end%>
-</div>
+<% if logged_in? %>
+  <div class="container mt-5 form-group">
+    <%= form_for @comment do |f| %>
+        <label><strong>Ajouter un commentaire</strong></label>
+        <%= f.text_field :content, class:"form-control" %>
+        <br /> 
+      </div>
+      <%= f.hidden_field :user_id, value: "#{current_user.id}" %>
+          <%= f.hidden_field :gossip_id, value: "#{@gossip.id}" %>
+      <%= f.submit "Ajouter le commentaire", class:"btn btn-success btn-lg" %>
+    <%end%>
+  </div>
+<%end%>

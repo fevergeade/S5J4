@@ -1,5 +1,6 @@
 class GossipsController < ApplicationController
   before_action :set_gossip, only: [:show, :edit, :update, :destroy]
+  before_action :check_logged, only: [:new, :create, :edit, :update, :destroy]
 
   # GET /gossips
   # GET /gossips.json
@@ -17,9 +18,14 @@ class GossipsController < ApplicationController
 
   # GET /gossips/new
   def new
-    @gossip = Gossip.new
-    @tag_selected = []
-    @tags = Tag.all
+    if logged_in?
+      @gossip = Gossip.new
+      @tag_selected = []
+      @tags = Tag.all
+    else
+      redirect_to new_sessions_controller_path
+    end
+
   end
 
   # GET /gossips/1/edit
@@ -27,6 +33,9 @@ class GossipsController < ApplicationController
     @tags = Tag.all
     @gossip = Gossip.find(params[:id])
     @current_tags = JoinTableGossipTag.all.map{|join| join.gossip_id == @gossip.id ? join.tag_id : nil}.compact
+    if @gossip.user.id != current_user.id
+      redirect_to root_path
+    end
   end
 
   # POST /gossips
@@ -47,33 +56,33 @@ class GossipsController < ApplicationController
         format.json { render json: @gossip.errors, status: :unprocessable_entity }
       end
     end
-    puts @gossip.errors.messages
   end
 
   # PATCH/PUT /gossips/1
   # PATCH/PUT /gossips/1.json
   def update
-
     @tags = Tag.all
     @gossip = Gossip.find(params[:id])
-    @current_tags = JoinTableGossipTag.all.map{|join| join.gossip_id == @gossip.id ? join.tag_id : nil}.compact
-    @tag_selected =params[:@tag_selected]
-    respond_to do |format|
-      if @gossip.update(gossip_params)
-        @tags.each do |tags|
-          if @current_tags.index(tags.id)!=nil && @tag_selected.index(tags.id.to_s)==nil
-            puts "je detruit"
-            JoinTableGossipTag.find_by(gossip_id: @gossip.id,tag_id: tags.id).destroy
-          elsif @current_tags.index(tags.id)==nil && @tag_selected.index(tags.id.to_s)!=nil
-            puts "j'ajoute"
-            JoinTableGossipTag.create(gossip_id: @gossip.id,tag_id: tags.id)
+    if @gossip.user.id != current_user.id
+      redirect_to root_path
+    else
+      @current_tags = JoinTableGossipTag.all.map{|join| join.gossip_id == @gossip.id ? join.tag_id : nil}.compact
+      @tag_selected =params[:@tag_selected]
+      respond_to do |format|
+        if @gossip.update(gossip_params)
+          @tags.each do |tags|
+            if @current_tags.index(tags.id)!=nil && @tag_selected.index(tags.id.to_s)==nil
+              JoinTableGossipTag.find_by(gossip_id: @gossip.id,tag_id: tags.id).destroy
+            elsif @current_tags.index(tags.id)==nil && @tag_selected.index(tags.id.to_s)!=nil
+              JoinTableGossipTag.create(gossip_id: @gossip.id,tag_id: tags.id)
+            end
           end
+          format.html { redirect_to @gossip, notice: 'Gossip was successfully updated.' }
+          format.json { render :show, status: :ok, location: @gossip }
+        else
+          format.html { render :edit }
+          format.json { render json: @gossip.errors, status: :unprocessable_entity }
         end
-        format.html { redirect_to @gossip, notice: 'Gossip was successfully updated.' }
-        format.json { render :show, status: :ok, location: @gossip }
-      else
-        format.html { render :edit }
-        format.json { render json: @gossip.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -81,18 +90,22 @@ class GossipsController < ApplicationController
   # DELETE /gossips/1
   # DELETE /gossips/1.json
   def destroy
-    @current_tags = JoinTableGossipTag.all.map{|join| join.gossip_id == @gossip.id ? join.tag_id : nil}.compact
-    @current_tags.each do |tags|
-      JoinTableGossipTag.find_by(gossip_id: @gossip.id,tag_id: tags).destroy
-    end
-    @current_comment = set_gossip_comments(@gossip)
-    @current_comment.each do |comment|
-      comment.destroy
-    end
-    @gossip.destroy
-    respond_to do |format|
-      format.html { redirect_to gossips_url, notice: 'Gossip was successfully destroyed.' }
-      format.json { head :no_content }
+    if @gossip.user.id != current_user.id
+      redirect_to root_path
+    else
+      @current_tags = JoinTableGossipTag.all.map{|join| join.gossip_id == @gossip.id ? join.tag_id : nil}.compact
+      @current_tags.each do |tags|
+        JoinTableGossipTag.find_by(gossip_id: @gossip.id,tag_id: tags).destroy
+      end
+      @current_comment = set_gossip_comments(@gossip)
+      @current_comment.each do |comment|
+        comment.destroy
+      end
+      @gossip.destroy
+      respond_to do |format|
+        format.html { redirect_to gossips_url, notice: 'Gossip was successfully destroyed.' }
+        format.json { head :no_content }
+      end
     end
   end
 
@@ -108,5 +121,11 @@ class GossipsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def gossip_params
       params.require(:gossip).permit(:title, :content, :user_id)
+    end
+
+    def check_logged
+      if session[:user_id] == nil ? true : false
+        redirect_to new_sessions_controller_path
+      end
     end
 end

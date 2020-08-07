@@ -1,0 +1,22 @@
+<div class="jumbotron">
+<h1 class="display-4">The Gossip Project</h1>
+<p class="lead">Création de ma fiche perso !!</p>
+</div>
+<%= link_to 'retour à la liste', gossips_path, class: "btn btn-primary btn-sm btn-block" %>
+
+<div class="container mt-5 form-group">
+<%= form_tag sessions_controller_index_path, method: "post" do %>
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+
+  <strong><%= label_tag 'Email :' %></strong>
+  <%= text_field_tag 'email', @user.email, class:"form-control" %>
+  <br /> 
+
+  <strong><%= label_tag 'Mot de passe' %></strong>
+  <%= password_field_tag 'password', @user.email, class:"form-control", type:"password" %>
+  <br /> 
+
+  <div class="d-flex justify-content-center"><%= submit_tag "CONNEXION", class:"btn btn-success btn-lg"%></div>
+
+<% end %>
+</div>

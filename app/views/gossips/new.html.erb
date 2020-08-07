@@ -12,7 +12,7 @@
       <br /> 
     </div>
     <div>
-      <label><strong>Ajouter un tag</strong></label>
+      <label><strong>Le Potin</strong></label>
       <%= f.text_area :content, class:"form-control" %>
       <br /> 
     </div>
@@ -27,7 +27,7 @@
           <% end %>
         </div>
       </div>
-    <%= f.hidden_field :user_id, value: "#{User.first.id}" %>
+    <%= f.hidden_field :user_id, value: "#{current_user.id}" %>
     <%= f.submit "Créer un potin", class:"btn btn-success btn-lg" %>
   <%end%>
 </div>

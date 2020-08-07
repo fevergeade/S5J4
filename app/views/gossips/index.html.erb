@@ -3,10 +3,11 @@
 <p class="lead">Affichage de tous les gossips</p>
 </div>
 
-
-<%= link_to 'Créer un nouveau GOSSIP', new_gossip_path, class: "btn btn-primary btn-lg"%>
-<br />
-<br />
+<% if logged_in? %>
+  <%= link_to 'Créer un nouveau GOSSIP', new_gossip_path, class: "btn btn-primary btn-lg"%>
+  <br />
+  <br />
+<%end %>
 <div class="list-group">
   <% @gossips.each do |gossip| %>
     <div> 

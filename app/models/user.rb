@@ -8,4 +8,5 @@ class User < ApplicationRecord
   format: { with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, message: "email adress please" }
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }
+  validates :age, numericality: true
 end

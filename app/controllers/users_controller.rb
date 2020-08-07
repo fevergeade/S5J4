@@ -15,6 +15,7 @@ class UsersController < ApplicationController
   # GET /users/new
   def new
     @user = User.new
+    @cities = City.all
   end
 
   # GET /users/1/edit
@@ -24,17 +25,29 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    @user = User.new(user_params)
-
-    respond_to do |format|
-      if @user.save
-        format.html { redirect_to @user, notice: 'User was successfully created.' }
-        format.json { render :show, status: :created, location: @user }
-      else
-        format.html { render :new }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
+    post_params = params.require(:user).permit(:last_name, :first_name, :age, :description, :email, :password_digest, :city_id )
+    puts post_params
+      @cities = City.all
+      @user = User.new(
+          first_name: post_params[:first_name], 
+          last_name: post_params[:last_name], 
+          description: post_params[:description],
+          email: post_params[:email],
+          password: post_params[:password_digest], 
+          age: post_params[:age].to_i,
+          city_id: post_params[:city_id].to_i
+        )
+      respond_to do |format|
+        if @user.save
+          format.html { redirect_to root_path, notice: 'User was successfully created.' }
+          format.json { render :show, status: :created, location: @user }
+        else
+          puts @user.errors.messages
+          format.html { render :new }
+          format.json { render json: @user.errors, status: :unprocessable_entity }
+        end
       end
-    end
+
   end
 
   # PATCH/PUT /users/1
@@ -45,6 +58,7 @@ class UsersController < ApplicationController
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { render :show, status: :ok, location: @user }
       else
+        puts 
         format.html { render :edit }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
@@ -69,6 +83,12 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:first_name, :last_name, :description, :email, :age)
+      puts "user_params"
+      puts params
+
+      params.require(:user).permit(:last_name, :first_name, :age, :description, :email, :password_digest, :city_id )
+      puts "apres"
+      puts params
+
     end
 end
